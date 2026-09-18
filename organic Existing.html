@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة أورگانيك جويس</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="stylesheet" href="organic.css">
+</head>
+<body>
+<div id="invoice-container">
+<div class="header-section">
+    <img
+        src="icon.png.jpg"
+        alt="Logo"
+        class="logo"
+        onerror="this.classList.add('logo-missing')"
+    >
+
+    <div class="header-title">
+        ئورگانيك جويس
+        <small>ORGANIC JUICES</small>
+    </div>
+    <img
+        src="icon.png.jpg"
+        alt="Logo"
+        class="logo"
+        onerror="this.classList.add('logo-missing')"
+    >
+
+</div>
+
+<div class="info-section">
+
+    <div class="info-item">
+        <span>به ريز:</span>
+        <input
+            type="text"
+            id="customer-name"
+            aria-label="ناڤی کریار"
+            style="width:170px;"
+        >
+    </div>
+
+    <div class="info-item">
+        <span>ناڤ ونيشان:</span>
+        <input
+            type="text"
+            id="customer-address"
+            aria-label="ناڤونیشان"
+            style="width:170px;"
+        >
+    </div>
+
+    <div class="info-item">
+        <span>مێژوو:</span>
+
+        <input
+            type="text"
+            id="date-year"
+            maxlength="4"
+            style="width:45px;text-align:center;"
+        >
+
+        /
+
+        <input
+            type="text"
+            id="date-month"
+            maxlength="2"
+            style="width:35px;text-align:center;"
+        >
+
+        /
+
+        <input
+            type="text"
+            id="date-day"
+            maxlength="2"
+            style="width:35px;text-align:center;"
+        >
+    </div>
+
+</div>
+
+<div class="tables-container">
+
+    <table id="factory-table">
+        <thead>
+            <tr>
+                <th colspan="2">مواد معمل</th>
+            </tr>
+        </thead>
+
+        <tbody id="factory-body"></tbody>
+    </table>
+
+    <table id="storage-table">
+        <thead>
+            <tr>
+                <th colspan="2">مواد مخزن</th>
+            </tr>
+        </thead>
+
+        <tbody id="storage-body"></tbody>
+    </table>
+
+</div>
+
+<div id="summary-bar" class="summary-bar"></div>
+</div>
+
+<div class="actions-row">
+
+<button
+    class="export-btn"
+    onclick="generatePDF()"
+>
+    تصدير الفاتورة (PDF)
+</button>
+
+<button
+    class="reset-btn"
+    onclick="resetOrder()"
+>
+    إعادة ضبط الطلب
+</button>
+</div>
+<script src="organic.js"></script>
+</body>
+</html>
