@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>قائمة أورگانيك جويس</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        :root {
+            --page-bg-start: #f5f7fa;
+            --page-bg-end: #c3cfe2;
+            --black: #111111;
+            --border: #d5d5d5;
+            --blue: #1976d2;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: "Cairo", sans-serif;
+        }
+
+        html {
+            width: 100%;
+            min-height: 100%;
+        }
+
+        body {
+            width: 100%;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(
+                135deg,
+                var(--page-bg-start) 0%,
+                var(--page-bg-end) 100%
+            );
+        }
+
+        #invoice-container {
+            width: 210mm;
+            max-width: 100%;
+            min-height: 297mm;
+            padding: 12mm 15mm;
+            margin: 0 auto;
+            position: relative;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        .header-section {
+            width: 100%;
+            min-height: 104px;
+            padding: 10px 25px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            position: relative;
+            z-index: 10;
+            background: linear-gradient(135deg, #020200 0%, #020100 100%);
+            border: 1px solid #f9a825;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo-frame {
+            width: 84px;
+            height: 84px;
+            flex: 0 0 84px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: contain;
+        }
+
+        .header-title {
+            flex: 1;
+            min-width: 0;
+            text-align: center;
+            font-size: clamp(28px, 5vw, 50px);
+            font-weight: 900;
+            line-height: 1.2;
+            color: #f4f7f4;
+            text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.25);
+        }
+
+        .header-title small {
+            display: block;
+            margin-top: 4px;
+            font-family: Arial, sans-serif;
+            font-size: clamp(10px, 1.7vw, 17px);
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #f9a825;
+            direction: ltr;
+        }
+        .info-section {
+            width: 100%;
+            min-height: 64px;
+            padding: 10px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            position: relative;
+            z-index: 10;
+            background: rgba(252, 252, 252, 0.95);
+            border: 1px solid #dddddd;
+            border-radius: 10px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .info-item {
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .info-label {
+            flex-shrink: 0;
+            font-size: clamp(15px, 2vw, 21px);
+            font-weight: 800;
+            color: #000000;
+        }
+        .info-value {
+            font-size: clamp(16px, 2.2vw, 23px);
+            font-weight: 800;
+            color: #000000;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .date-item {
+            direction: ltr;
+        }
+
+        .date-item input {
+            width: 62px;
+            padding: 4px 3px;
+            outline: none;
+            background: transparent;
+            border: none;
+            border-bottom: 2px dashed #999999;
+            color: #1565c0;
+            font-size: clamp(16px, 2.2vw, 23px);
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .date-item input:nth-of-type(2),
+        .date-item input:nth-of-type(3) {
+            width: 42px;
+        }
+
+        .date-item input:focus {
+            border-bottom-color: var(--blue);
+        }
+
+        .date-separator {
+            font-size: 20px;
+            font-weight: 800;
+            color: #000000;
+        }
+        .date-value {
+            font-size: 23px;
+            font-weight: 800;
+            color: #000000;
+            direction: ltr;
+        }
+
+        .tables-container {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: start;
+            gap: 12px;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            min-width: 0;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.65);
+            border: 2px solid #111111;
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.06);
+        }
+        .watermark-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .wm-group {
+            transform: rotate(-35deg);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .wm-text {
+            display: block;
+            font-family: Arial, sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            line-height: 1;
+            white-space: nowrap;
+            color: rgba(0, 0, 0, 0.11);
+        }
+        table {
+            width: 100%;
+            position: relative;
+            z-index: 10;
+            border-collapse: separate;
+            border-spacing: 0;
+            text-align: center;
+        }
+
+        th {
+            padding: 10px 6px;
+            background: linear-gradient(135deg, #1f1f1f 0%, #000000 100%);
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 800;
+            border-bottom: 3px solid #111111;
+            border-left: 1px solid #444444;
+        }
+
+        th:last-child {
+            border-left: none;
+        }
+
+        th.controls-header {
+            width: 46%;
+        }
+
+        td {
+            height: 36px;
+            padding: 3px 6px;
+            background-color: transparent;
+            color: #000000;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.25;
+            border-bottom: 1px solid var(--border);
+            border-left: 1px solid var(--border);
+        }
+
+        td:last-child {
+            border-left: none;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) td {
+            background-color: rgba(245, 245, 245, 0.4);
+        }
+
+        .controls {
+            width: 46%;
+            white-space: nowrap;
+        }
+
+        .item-name {
+            width: 54%;
+        }
+
+        .btn {
+            width: 28px;
+            height: 28px;
+            margin: 0 2px;
+            padding: 0;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 28px;
+            vertical-align: middle;
+            transition:
+                transform 0.15s ease,
+                opacity 0.15s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.08);
+        }
+
+        .btn:active {
+            transform: scale(0.94);
+        }
+
+        .btn-plus {
+            background: #111111;
+            color: #ffffff;
+        }
+
+        .btn-minus {
+            background: #eeeeee;
+            color: #111111;
+            border: 1px solid #999999;
+        }
+
+        .qty {
+            min-width: 44px;
+            display: inline-block;
+            color: #000000;
+            font-size: 15px;
+            font-weight: 800;
+            text-align: center;
+            direction: ltr;
+        }
+        .summary-bar {
+            width: 100%;
+            min-height: 0;
+            margin-top: 15px;
+            padding: 0;
+            overflow: hidden;
+            text-align: center;
+            font-size: 17px;
+            font-weight: 800;
+            color: #ffffff;
+            background: var(--black);
+            border-radius: 8px;
+            opacity: 0;
+            transform: translateY(-5px);
+            transition:
+                opacity 0.2s ease,
+                transform 0.2s ease,
+                padding 0.2s ease;
+        }
+
+        .summary-bar.visible {
+            min-height: 42px;
+            padding: 8px;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .actions-row {
+            width: 100%;
+            max-width: 210mm;
+            margin: 25px auto 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .export-btn,
+        .reset-btn {
+            min-width: 210px;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition:
+                transform 0.15s ease,
+                box-shadow 0.15s ease;
+        }
+
+        .export-btn:hover,
+        .reset-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .export-btn:disabled {
+            opacity: 0.65;
+            cursor: wait;
+            transform: none;
+        }
+
+        .export-btn {
+            border: none;
+            color: #ffffff;
+            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+            box-shadow: 0 8px 15px rgba(25, 118, 210, 0.3);
+        }
+
+        .reset-btn {
+            color: #111111;
+            background: #ffffff;
+            border: 2px solid #999999;
+        }
+        .pdf-mode {
+            width: 210mm !important;
+            min-height: 297mm !important;
+            padding: 12mm 15mm !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            background: #ffffff !important;
+        }
+
+        .pdf-mode .info-section {
+            flex-direction: row !important;
+            align-items: center !important;
+            background: #ffffff !important;
+        }
+
+        .pdf-mode .info-item {
+            width: auto !important;
+            flex: 0 1 auto !important;
+        }
+
+        .pdf-mode .tables-container {
+            grid-template-columns: 1fr 1fr !important;
+        }
+
+        .pdf-mode .table-wrapper {
+            background: #ffffff !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+        }
+
+        .pdf-mode table {
+            border-collapse: collapse !important;
+        }
+
+        .pdf-mode th,
+        .pdf-mode td {
+            border: 1px solid #555555 !important;
+        }
+
+        .pdf-mode th {
+            background: #000000 !important;
+            color: #ffffff !important;
+        }
+        .pdf-mode td,
+        .pdf-mode .qty,
+        .pdf-mode .item-name,
+        .pdf-mode .info-label,
+        .pdf-mode .info-value,
+        .pdf-mode .date-value,
+        .pdf-mode .date-separator {
+            color: #000000 !important;
+        }
+
+        .pdf-mode tr:nth-child(even) td {
+            background: transparent !important;
+        }
+
+        .pdf-mode .btn,
+        .pdf-mode .summary-bar {
+            display: none !important;
+        }
+
+        .pdf-mode .wm-text {
+            color: rgba(0, 0, 0, 0.12) !important;
+        }
+        @media (max-width: 900px) {
+            body {
+                padding: 12px;
+            }
+
+            #invoice-container {
+                width: 100%;
+                min-height: auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+
+            .header-section {
+                min-height: 92px;
+                padding: 10px 15px;
+            }
+
+            .logo-frame {
+                width: 72px;
+                height: 72px;
+                flex-basis: 72px;
+            }
+        }
+        @media (max-width: 640px) {
+            body {
+                padding: 8px;
+            }
+
+            #invoice-container {
+                padding: 10px;
+                border-radius: 8px;
+            }
+
+            .header-section {
+                min-height: 80px;
+                padding: 8px;
+                gap: 6px;
+            }
+
+            .logo-frame {
+                width: 55px;
+                height: 55px;
+                flex-basis: 55px;
+            }
+
+            .header-title {
+                font-size: clamp(20px, 7vw, 32px);
+            }
+
+            .header-title small {
+                font-size: 8px;
+                letter-spacing: 1px;
+            }
+
+            .info-section {
+                padding: 10px;
+                gap: 8px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .info-item {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .date-item {
+                justify-content: flex-start;
+            }
+
+            .tables-container {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            th {
+                padding: 9px 5px;
+                font-size: 15px;
+            }
+
+            td {
+                height: 46px;
+                padding: 4px 4px;
+                font-size: 15px;
+            }
+
+            th.controls-header,
+            .controls {
+                width: 42%;
+            }
+
+            .item-name {
+                width: 58%;
+            }
+
+            .btn {
+                width: 30px;
+                height: 30px;
+                margin: 0 1px;
+                font-size: 20px;
+                line-height: 30px;
+            }
+
+            .qty {
+                min-width: 42px;
+                font-size: 14px;
+            }
+
+            .wm-text {
+                font-size: 24px;
+            }
+
+            .actions-row {
+                margin-top: 15px;
+                gap: 10px;
+            }
+
+            .export-btn,
+            .reset-btn {
+                width: 100%;
+                min-width: 0;
+                font-size: 15px;
+            }
+        }
+        @media (max-width: 360px) {
+            td {
+                font-size: 14px;
+            }
+
+            .btn {
+                width: 27px;
+                height: 27px;
+                font-size: 18px;
+                line-height: 27px;
+            }
+
+            .qty {
+                min-width: 36px;
+                font-size: 13px;
+            }
+        }
+        @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
+
+            html,
+            body {
+                width: 210mm;
+                min-height: 297mm;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+            }
+
+            #invoice-container {
+                width: 210mm;
+                min-height: 297mm;
+                padding: 12mm 15mm;
+                margin: 0;
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .tables-container {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .actions-row {
+                display: none !important;
+            }
+
+            .header-section {
+                background: #111111 !important;
+                border: 1px solid #111111 !important;
+            }
+
+            th {
+                background: #000000 !important;
+                color: #ffffff !important;
+            }
+
+            .wm-text {
+                color: rgba(0, 0, 0, 0.12) !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main id="invoice-container">
+
+        <header class="header-section">
+
+            <div class="logo-frame">
+                <img
+                    src="icon.png.jpg"
+                    alt="Organic Juices Logo"
+                    class="logo"
+                    onerror="this.style.display='none'"
+                >
+            </div>
+
+            <div class="header-title">
+                <div>ئورگانيك جويس</div>
+                <small>ORGANIC JUICES</small>
+            </div>
+
+            <div class="logo-frame">
+                <img
+                    src="icon.png.jpg"
+                    alt="Organic Juices Logo"
+                    class="logo"
+                    onerror="this.style.display='none'"
+                >
+            </div>
+
+        </header>
+
+        <section class="info-section">
+
+            <div class="info-item">
+                <span class="info-label">ناڤ ونيشان:</span>
+                <span class="info-value">صالح يوسف</span>
+            </div>
+
+            <div class="info-item date-item">
+
+                <span class="info-label">ميژوو:</span>
+
+                <input
+                    type="text"
+                    id="date-year"
+                    maxlength="4"
+                    inputmode="numeric"
+                    aria-label="السنة"
+                >
+
+                <span class="date-separator">/</span>
+
+                <input
+                    type="text"
+                    id="date-month"
+                    maxlength="2"
+                    inputmode="numeric"
+                    aria-label="الشهر"
+                >
+
+                <span class="date-separator">/</span>
+
+                <input
+                    type="text"
+                    id="date-day"
+                    maxlength="2"
+                    inputmode="numeric"
+                    aria-label="اليوم"
+                >
+
+            </div>
+
+        </section>
+
+        <section class="tables-container">
+            <div class="table-wrapper">
+
+                <div class="watermark-layer">
+                    <div class="wm-group">
+                        <span class="wm-text">Organic Juices</span>
+                        <span class="wm-text">Salih Yousif</span>
+                    </div>
+
+                    <div class="wm-group">
+                        <span class="wm-text">Organic Juices</span>
+                        <span class="wm-text">Salih Yousif</span>
+                    </div>
+
+                    <div class="wm-group">
+                        <span class="wm-text">Organic Juices</span>
+                        <span class="wm-text">Salih Yousif</span>
+                    </div>
+                </div>
+
+                <table id="factory-table">
+
+                    <thead>
+                        <tr>
+                            <th class="controls-header">العدد</th>
+                            <th>مواد معمل</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="factory-body"></tbody>
+
+                </table>
+
+            </div>
+            <div class="table-wrapper">
+
+                <div class="watermark-layer">
+                    <div class="wm-group">
+                        <span class="wm-text">Organic Juices</span>
+                        <span class="wm-text">Salih Yousif</span>
+                    </div>
+
+                    <div class="wm-group">
+                        <span class="wm-text">Organic Juices</span>
+                        <span class="wm-text">Salih Yousif</span>
+                    </div>
+
+                    <div class="wm-group">
+                        <span class="wm-text">Organic Juices</span>
+                        <span class="wm-text">Salih Yousif</span>
+                    </div>
+                </div>
+
+                <table id="storage-table">
+
+                    <thead>
+                        <tr>
+                            <th class="controls-header">العدد</th>
+                            <th>مواد مخزن</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="storage-body"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+        <div id="summary-bar" class="summary-bar"></div>
+
+    </main>
+
+    <div class="actions-row">
+
+        <button
+            type="button"
+            class="export-btn"
+            id="export-btn"
+            onclick="generatePDF()"
+        >
+            تصدير الفاتورة (PDF)
+        </button>
+
+        <button
+            type="button"
+            class="reset-btn"
+            onclick="resetOrder()"
+        >
+            إعادة ضبط الطلب
+        </button>
+
+    </div>
+
+    <script>
+        const factoryItems = [
+            { name: "مغربی", unit: "" },
+            { name: "سویسری", unit: "" },
+            { name: "شير لوگو", unit: "" },
+            { name: "شير ئچيم", unit: "" },
+            { name: "ميويش", unit: " لتر" },
+            { name: "ميويش بچیک", unit: "" },
+            { name: "تمر هندي", unit: " لتر" },
+            { name: "تمرهند بچیک", unit: "" },
+            { name: "غ.مانكو", unit: " لتر", step: 5 },
+            { name: "غ.تيشەمبی", unit: " لتر", step: 5 },
+            { name: "غ.اناناس", unit: "" },
+            { name: "غ.خوخ", unit: " لتر", step: 5 },
+            { name: "بەفر", unit: "" },
+            { name: "گیزاهند", unit: " لتر" },
+            { name: "گیزاهند بچیک", unit: "" },
+            { name: "حلیک", unit: " لتر" },
+            { name: "سور", unit: "" },
+            { name: "زەر", unit: "" },
+            { name: "کەسک", unit: "" },
+            { name: "مادده", unit: "" }
+        ];
+
+        const storageItems = [
+            { name: "گلاس", unit: "" },
+            { name: "قسابه", unit: "" },
+            { name: "بوكس ٢", unit: "" },
+            { name: "بوكس ٤", unit: "" },
+            { name: "بوكس ٦", unit: "" },
+            { name: "بطل مەزن", unit: "" },
+            { name: "بطل بچيك", unit: "" },
+            { name: "علاگه لوكو", unit: "" },
+            { name: "وەرقه كاشير", unit: "" },
+            { name: "بوكسين ڤیقی", unit: "" },
+            { name: "گلاس كيد", unit: "" },
+            { name: "كلينكس", unit: "" },
+            { name: "عەلاكيت گليشی", unit: "" },
+            { name: "باهیڤ", unit: " kg", step: 0.5 },
+            { name: "ئاڤ", unit: "" },
+            { name: "گیز", unit: " kg", step: 0.5 },
+            { name: "میویش", unit: " kg" , step: 0.5 },
+            { name: "دەستگورگ", unit: "" },
+            { name: "کلینکس شل", unit: "" },
+            { name: "معطر جو", unit: "" }
+        ];
+
+        function createQuantityControls(item) {
+            const step = item.step || 1;
+            const unit = item.unit || "";
+
+            return `
+                <button
+                    class="btn btn-plus"
+                    onclick="updateQty(this, 1)"
+                    type="button"
+                    aria-label="زيادة"
+                >+</button>
+
+                <span
+                    class="qty"
+                    data-count="0"
+                    data-unit="${unit}"
+                    data-step="${step}"
+                >0${unit}</span>
+
+                <button
+                    class="btn btn-minus"
+                    onclick="updateQty(this, -1)"
+                    type="button"
+                    aria-label="نقصان"
+                >−</button>
+            `;
+        }
+
+        function renderTable(items, tbodyId) {
+            const tbody = document.getElementById(tbodyId);
+
+            if (!tbody) {
+                return;
+            }
+
+            tbody.innerHTML = "";
+
+            items.forEach((item) => {
+                const tr = document.createElement("tr");
+
+                const tdControls = document.createElement("td");
+                tdControls.className = "controls";
+                tdControls.innerHTML = createQuantityControls(item);
+
+                const tdName = document.createElement("td");
+                tdName.className = "item-name";
+                tdName.textContent = item.name;
+
+                tr.appendChild(tdControls);
+                tr.appendChild(tdName);
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateQty(btn, change) {
+            if (!btn || !btn.parentElement) {
+                return;
+            }
+
+            const qtySpan = btn.parentElement.querySelector(".qty");
+
+            if (!qtySpan) {
+                return;
+            }
+
+            const step = parseFloat(qtySpan.getAttribute("data-step")) || 1;
+            const currentCount = parseFloat(qtySpan.getAttribute("data-count")) || 0;
+
+            let newCount = currentCount + (change * step);
+
+            if (newCount < 0) {
+                newCount = 0;
+            }
+
+            newCount = Math.round(newCount * 100) / 100;
+
+            const unit = qtySpan.getAttribute("data-unit") || "";
+
+            qtySpan.setAttribute("data-count", String(newCount));
+            qtySpan.textContent = `${newCount}${unit}`;
+
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const bar = document.getElementById("summary-bar");
+
+            if (!bar) {
+                return;
+            }
+
+            let selectedCount = 0;
+
+            document.querySelectorAll(".qty").forEach((span) => {
+                const count = parseFloat(span.getAttribute("data-count")) || 0;
+
+                if (count > 0) {
+                    selectedCount++;
+                }
+            });
+
+            if (selectedCount > 0) {
+                bar.textContent = `تم اختيار ${selectedCount} مادة`;
+                bar.classList.add("visible");
+            } else {
+                bar.textContent = "";
+                bar.classList.remove("visible");
+            }
+        }
+
+        function resetOrder() {
+            const qtySpans = document.querySelectorAll(".qty");
+
+            const hasSelection = Array.from(qtySpans).some((span) => {
+                return (parseFloat(span.getAttribute("data-count")) || 0) > 0;
+            });
+
+            if (hasSelection) {
+                const confirmed = confirm(
+                    "سرەڕای ئەم کردارە هەموو ژمارەکان و زانیارییەکان دەگەڕێنەوە بۆ سفر. دڵنیایت؟"
+                );
+
+                if (!confirmed) {
+                    return;
+                }
+            }
+
+            qtySpans.forEach((span) => {
+                const unit = span.getAttribute("data-unit") || "";
+
+                span.setAttribute("data-count", "0");
+                span.textContent = `0${unit}`;
+            });
+
+            updateSummary();
+        }
+
+        function prefillToday() {
+            const today = new Date();
+
+            const year = document.getElementById("date-year");
+            const month = document.getElementById("date-month");
+            const day = document.getElementById("date-day");
+
+            if (year) {
+                year.value = today.getFullYear();
+            }
+
+            if (month) {
+                month.value = String(today.getMonth() + 1).padStart(2, "0");
+            }
+
+            if (day) {
+                day.value = String(today.getDate()).padStart(2, "0");
+            }
+        }
+
+        function setupDateInputs() {
+            [
+                ["date-year", 4],
+                ["date-month", 2],
+                ["date-day", 2]
+            ].forEach(([id, maxLength]) => {
+                const input = document.getElementById(id);
+
+                if (input) {
+                    input.addEventListener("input", () => {
+                        input.value = input.value
+                            .replace(/\D/g, "")
+                            .slice(0, maxLength);
+                    });
+                }
+            });
+        }
+
+        async function generatePDF() {
+            const exportBtn = document.getElementById("export-btn");
+
+            if (
+                typeof html2canvas === "undefined" ||
+                typeof window.jspdf === "undefined"
+            ) {
+                alert(
+                    "تکایە پەیوەندیت بە ئینتەرنێت پشکنینەوە، چونکە کتێبخانەکانی PDF بارنەبوون."
+                );
+
+                return;
+            }
+
+            const element = document.getElementById("invoice-container");
+
+            if (!element) {
+                return;
+            }
+            const dateValues = {
+                "date-year": document.getElementById("date-year")?.value || "",
+                "date-month": document.getElementById("date-month")?.value || "",
+                "date-day": document.getElementById("date-day")?.value || ""
+            };
+
+            if (exportBtn) {
+                exportBtn.disabled = true;
+                exportBtn.textContent = "چاوەڕوان بە...";
+            }
+
+            try {
+                if (document.fonts && document.fonts.ready) {
+                    await document.fonts.ready;
+                }
+
+                const canvas = await html2canvas(element, {
+                    scale: 3,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: "#ffffff",
+                    scrollX: 0,
+                    scrollY: 0,
+                    windowWidth: 1200,
+                    logging: false,
+                    onclone: (clonedDoc) => {
+                        const clonedEl = clonedDoc.getElementById("invoice-container");
+
+                        if (clonedEl) {
+                            clonedEl.classList.add("pdf-mode");
+                        }
+
+                        clonedDoc.querySelectorAll(".qty").forEach((span) => {
+                            const count = parseFloat(span.getAttribute("data-count")) || 0;
+
+                            if (count === 0) {
+                                span.textContent = "";
+                            }
+                        });
+
+                        Object.keys(dateValues).forEach((id) => {
+                            const input = clonedDoc.getElementById(id);
+
+                            if (input) {
+                                const span = clonedDoc.createElement("span");
+                                span.className = "date-value";
+                                span.textContent = dateValues[id];
+                                input.replaceWith(span);
+                            }
+                        });
+                    }
+                });
+
+                const { jsPDF } = window.jspdf;
+
+                const pdf = new jsPDF({
+                    orientation: "portrait",
+                    unit: "mm",
+                    format: "a4"
+                });
+
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const canvasRatio = canvas.height / canvas.width;
+
+                let imgWidth = pageWidth;
+                let imgHeight = imgWidth * canvasRatio;
+
+                if (imgHeight > pageHeight) {
+                    imgHeight = pageHeight;
+                    imgWidth = imgHeight / canvasRatio;
+                }
+
+                const x = (pageWidth - imgWidth) / 2;
+                const y = (pageHeight - imgHeight) / 2;
+
+                pdf.addImage(
+                    canvas.toDataURL("image/jpeg", 0.98),
+                    "JPEG",
+                    x,
+                    y,
+                    imgWidth,
+                    imgHeight
+                );
+
+                const day = dateValues["date-day"];
+                const month = dateValues["date-month"];
+                const year = dateValues["date-year"];
+                const dateName = [year, month, day].filter(Boolean).join("-");
+
+                pdf.save(`Organic-Juices-Salih-Yousif${dateName ? "-" + dateName : ""}.pdf`);
+
+            } catch (error) {
+
+                console.error("PDF Error:", error);
+
+                alert("هەڵەیەک ڕوویدا لە دروستکردنی PDF، تکایە دووبارە هەوڵبدەوە.");
+
+            } finally {
+
+                if (exportBtn) {
+                    exportBtn.disabled = false;
+                    exportBtn.textContent = "تصدير الفاتورة (PDF)";
+                }
+            }
+        }
+
+        renderTable(factoryItems, "factory-body");
+        renderTable(storageItems, "storage-body");
+
+        prefillToday();
+        setupDateInputs();
+        updateSummary();
+        // خو بیژی نەکە ههههههههه
+    </script>
+
+</body>
+</html>
