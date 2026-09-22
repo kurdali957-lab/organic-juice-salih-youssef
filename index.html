@@ -955,8 +955,6 @@
 
                 tbody.appendChild(tr);
             });
-
-            // صفوف فارغة لتساوي ارتفاع الجدولين
             for (let i = items.length; i < (totalRows || 0); i++) {
                 const tr = document.createElement("tr");
 
@@ -1093,6 +1091,47 @@
                 }
             });
         }
+        function downloadPdfBlob(blob, fileName) {
+            const blobUrl = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+
+            link.href = blobUrl;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+        }
+        async function sharePdfFileOnly(blob, fileName) {
+            let pdfFile;
+
+            try {
+                pdfFile = new File([blob], fileName, { type: "application/pdf" });
+            } catch (e) {
+                downloadPdfBlob(blob, fileName);
+                return;
+            }
+
+            const canUseShare =
+                typeof navigator.share === "function" &&
+                typeof navigator.canShare === "function" &&
+                navigator.canShare({ files: [pdfFile] });
+
+            if (canUseShare) {
+                try {
+                    await navigator.share({ files: [pdfFile] });
+                } catch (shareError) {
+                    if (shareError && shareError.name === "AbortError") {
+                        return;
+                    }
+
+                    downloadPdfBlob(blob, fileName);
+                }
+            } else {
+                downloadPdfBlob(blob, fileName);
+            }
+        }
 
         async function generatePDF() {
             const exportBtn = document.getElementById("export-btn");
@@ -1121,7 +1160,7 @@
 
             if (exportBtn) {
                 exportBtn.disabled = true;
-                exportBtn.textContent = "چاوەڕوان بە...";
+                exportBtn.textContent = " الرجاء الانتظار...";
             }
 
             try {
@@ -1202,8 +1241,10 @@
                 const month = dateValues["date-month"];
                 const year = dateValues["date-year"];
                 const dateName = [year, month, day].filter(Boolean).join("-");
+                const fileName = `Organic-Juices-Salih-Yousif${dateName ? "-" + dateName : ""}.pdf`;
+                const pdfBlob = pdf.output("blob");
 
-                pdf.save(`Organic-Juices-Salih-Yousif${dateName ? "-" + dateName : ""}.pdf`);
+                await sharePdfFileOnly(pdfBlob, fileName);
 
             } catch (error) {
 
@@ -1219,8 +1260,6 @@
                 }
             }
         }
-
-        // عدد الصفوف = أكبر الجدولين، ليبقيا متساويين ومتراصفين
         const totalRows = Math.max(factoryItems.length, storageItems.length);
 
         renderTable(factoryItems, "factory-body", totalRows);
